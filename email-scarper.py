@@ -1,3 +1,4 @@
+import argparse
 from bs4 import BeautifulSoup
 import requests
 import requests.exceptions
@@ -6,14 +7,32 @@ from collections import deque
 import re
 from tqdm import tqdm
 
-user_url = str(input('[+] Enter Target URL To Scan: '))
-urls = deque([user_url])
+# Clean help message
+parser = argparse.ArgumentParser(
+    description="🔍 Lightweight Email Crawler",
+    usage="python3 crawler.py -u <URL> [-m MAX_PAGES] [-t TIMEOUT]",
+    add_help=True,  # Still allows -h / --help
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
 
+# Argument parser setup
+parser = argparse.ArgumentParser(description="Email Crawler Script")
+parser.add_argument("-u", "--url", required=True, help="Target URL to scan")
+parser.add_argument("-m", "--max-pages", type=int, default=100, help="Maximum number of pages to scan (default: 100)")
+parser.add_argument("-t", "--timeout", type=int, default=5, help="Request timeout in seconds (default: 5)")
+
+args = parser.parse_args()
+
+# Initialization
+user_url = args.url
+max_pages = args.max_pages
+timeout = args.timeout
+
+urls = deque([user_url])
 scraped_urls = set()
 emails = set()
 
 count = 0
-max_pages = 100  # Change this to scan more or fewer pages
 
 try:
     with tqdm(total=max_pages, desc="Crawling Progress") as pbar:
@@ -31,7 +50,7 @@ try:
             path = url[:url.rfind('/') + 1] if '/' in parts.path else url
 
             try:
-                response = requests.get(url, timeout=5)
+                response = requests.get(url, timeout=timeout)
             except (requests.exceptions.MissingSchema,
                     requests.exceptions.ConnectionError,
                     requests.exceptions.InvalidSchema,
@@ -60,6 +79,8 @@ try:
 except KeyboardInterrupt:
     print('\n[-] Interrupted by user!')
 
-print("\n[+] Emails found:")
+number = len(emails)
+print(f"\n[+] Emails found:{number}")
 for mail in sorted(emails):
     print(mail)
+    
