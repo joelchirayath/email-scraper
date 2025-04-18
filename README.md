@@ -1,8 +1,10 @@
-# Email Scraper
+# 📧 Email Crawler
 
-A simple Python script to crawl web pages and extract email addresses using BeautifulSoup and regex.
+A lightweight Python-based web crawler that scans websites for email addresses. Built using `requests`, `BeautifulSoup`, and `argparse` with a progress bar powered by `tqdm`.
 
-## Usage
+---
+
+## 🚀 Usage
 
 ```bash
-python scraper.py
+python3 crawler.py -u <URL> [-m MAX_PAGES] [-t TIMEOUT]
